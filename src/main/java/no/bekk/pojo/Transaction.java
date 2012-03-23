@@ -10,6 +10,7 @@ public class Transaction extends DomainClass {
     public Operation data;
     public Status status;
     public Result result;
+    public Long resultId;
     public ResultError resultError;
 
     public Transaction(Long id, Type type, Operation data) {

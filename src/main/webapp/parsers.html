@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+    <script type="text/javascript" src="js/mustache.js"></script>
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+        body {
+            padding-top: 60px;
+            padding-bottom: 40px;
+        }
+    </style>
+    <script type="text/javascript">
+        var itemTemplate = '{{#items}}<tr id={{id}}><td>{{id}}</td><td>{{duration}}</td> </tr>{{/items}}';
+        $(function(){
+            fetchAll();
+        });
+        function fetchAll() {
+            $.get("rest/parsers", function(data) {
+                $("#parsers tbody").append(Mustache.render(itemTemplate, {items:data}));
+            });
+        }
+    </script>
+
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="#">Bekk Fagdag</a>
+
+            <div class="nav-collapse">
+                <ul class="nav">
+                    <li><a href="index.html">Create</a></li>
+                    <li class="active"><a href="#">Parsers</a></li>
+                </ul>
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+    </div>
+</div>
+<div class="container">
+    <h2>Innsendte parsers</h2>
+
+    <table id="parsers" class="table table-striped">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>Duration</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

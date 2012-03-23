@@ -1,9 +1,12 @@
 package no.bekk.rest;
 
+import no.bekk.pojo.Parser;
 import no.bekk.pojo.Transaction;
 import no.bekk.service.Broker;
 
 import java.net.URI;
+import java.util.List;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -18,11 +21,22 @@ import javax.ws.rs.core.UriBuilder;
 public class ParserResource {
     private Broker broker = Broker.getInstance();
 
+    @Path("/{id}")
+    public Parser getParser(@PathParam("id") Long id){
+        return broker.findParser(id);
+    }
+
+    @GET
+    @Path("/{id}")
+    public List<Parser> getParsers(){
+        return broker.findParsers();
+    }
 
     @POST
-    public Response addFileToParse(@PathParam("id") Long id) {
-        Transaction transaction = broker.addTransaction(Transaction.Type.Parse, null);
-        return Response.created(buildPath(transaction)).build();
+    @Path("/{id}")
+    public Response addFileToParse() {
+        Parser p = broker.createParser();
+        return Response.created(UriBuilder.fromResource(ParserResource.class).path(ParserResource.class, "getParser").build(p.id)).build();
     }
 
     private URI buildPath(Transaction transaction) {
