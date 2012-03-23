@@ -35,8 +35,8 @@ public class ParserResource {
     @POST
     @Path("/{id}")
     public Response addFileToParse() {
-        Parser p = broker.createParser();
-        return Response.created(UriBuilder.fromResource(ParserResource.class).path(ParserResource.class, "getParser").build(p.id)).build();
+        Transaction transaction = broker.addTransaction(Transaction.Type.Parse, null);
+        return Response.created(buildPath(transaction)).build();
     }
 
     private URI buildPath(Transaction transaction) {
