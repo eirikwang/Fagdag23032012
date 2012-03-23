@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+    <script type="text/javascript" src="js/mustache.js"></script>
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+        body {
+            padding-top: 60px;
+            padding-bottom: 40px;
+        }
+    </style>
+    <script type="text/javascript">
+        var allTemplate = ' <table class="table table-striped"><thead><th>Id</th><th>Status</th></thead> <tbody>{{#items}}<tr><td>{{id}}</td><td>{{status}}</td> </tr>{{/items}}</tbody></table>';
+        var itemTemplate = ' <tr id={{id}}><td>{{id}}</td><td>{{status}}</td> </tr>';
+
+        $(function() {
+            $("a").click(function(event) {
+                event.preventDefault();
+                $.post(this.href, function(response, textStatus, jqXHR) {
+                    addTransaction(jqXHR.getResponseHeader("Location"));
+                });
+            });
+            fetchAll();
+        });
+
+        function addTransaction(location, first) {
+            $.getJSON(location, function(data) {
+                var tr = $("#current tbody tr[id=" + data.id + "]");
+                if (data.status != 'Done') {
+                    setTimeout(function() {
+                        addTransaction(location)
+                    }, 1000);
+                    var html = Mustache.render(itemTemplate, data);
+                    if (tr.size() == 0) {
+                        console.log("append");
+                        $("#current tbody").append(html);
+                    } else {
+                        tr.replaceWith(html);
+                    }
+                } else {
+                    fetchAll();
+                    tr.remove();
+                }
+
+            });
+        }
+        function fetchAll() {
+            $.get("rest/transaction?status=Done", function(data) {
+                $("#historical").html(Mustache.render(allTemplate, {items:data}));
+            });
+        }
+    </script>
+
+</head>
+<body>
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="#">Bekk Fagdag</a>
+
+            <div class="nav-collapse">
+                <ul class="nav">
+                    <li class="active"><a href="#">Asynkrone tjenester</a></li>
+                </ul>
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+    </div>
+</div>
+<div class="container">
+    <h2>Rest operations</h2>
+
+
+    <p><a href="rest/parser">Ny innsending</a>
+
+</div>
+<div class="container">
+    <h2>Pågående innsendinger</h2>
+
+    <table id="current" class="table table-striped">
+        <thead>
+        <th>id</th>
+        <th>Status</th>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<div class="container">
+
+    <h2>Historiske innsendinger</h2>
+
+    <p id="historical">
+</div>
+</body>
+</html>
