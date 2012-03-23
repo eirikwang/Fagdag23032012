@@ -16,41 +16,13 @@
         var itemTemplate = ' <tr id={{id}}><td>{{id}}</td><td>{{status}}</td> </tr>';
 
         $(function() {
-            $("a").click(function(event) {
+            $("a.send").click(function(event) {
                 event.preventDefault();
                 $.post(this.href, function(response, textStatus, jqXHR) {
-                    addTransaction(jqXHR.getResponseHeader("Location"));
                 });
             });
-            fetchAll();
         });
 
-        function addTransaction(location, first) {
-            $.getJSON(location, function(data) {
-                var tr = $("#current tbody tr[id=" + data.id + "]");
-                if (data.status != 'Done') {
-                    setTimeout(function() {
-                        addTransaction(location)
-                    }, 1000);
-                    var html = Mustache.render(itemTemplate, data);
-                    if (tr.size() == 0) {
-                        console.log("append");
-                        $("#current tbody").append(html);
-                    } else {
-                        tr.replaceWith(html);
-                    }
-                } else {
-                    fetchAll();
-                    tr.remove();
-                }
-
-            });
-        }
-        function fetchAll() {
-            $.get("rest/transaction?status=Done", function(data) {
-                $("#historical").html(Mustache.render(allTemplate, {items:data}));
-            });
-        }
     </script>
 
 </head>
@@ -79,26 +51,9 @@
     <h2>Rest operations</h2>
 
 
-    <p><a href="rest/parser">Ny innsending</a>
+    <p><a class="send" href="rest/parser">Ny innsending</a>
 
 </div>
-<div class="container">
-    <h2>Pågående innsendinger</h2>
 
-    <table id="current" class="table table-striped">
-        <thead>
-        <th>id</th>
-        <th>Status</th>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-</div>
-<div class="container">
-
-    <h2>Historiske innsendinger</h2>
-
-    <p id="historical">
-</div>
 </body>
 </html>

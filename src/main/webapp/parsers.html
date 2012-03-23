@@ -17,7 +17,7 @@
             fetchAll();
         });
         function fetchAll() {
-            $.get("rest/parsers", function(data) {
+            $.get("rest/parser", function(data) {
                 $("#parsers tbody").append(Mustache.render(itemTemplate, {items:data}));
             });
         }
