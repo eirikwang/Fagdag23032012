@@ -12,16 +12,18 @@
         }
     </style>
     <script type="text/javascript">
-        var allTemplate = ' <table class="table table-striped"><thead><th>Id</th><th>Status</th></thead> <tbody>{{#items}}<tr><td>{{id}}</td><td>{{status}}</td> </tr>{{/items}}</tbody></table>';
+        var parserTemplate = '<h2>Parser info</h2><p>id: {{id}}</p><p>duration: {{duration}}</p>';
+        var allTemplate = ' {{#items}}<tr><td>{{id}}</td><td>{{status}}</td> <td><a href="rest/parser/{{resultId}}">se</a></td></tr>{{/items}}';
         var itemTemplate = ' <tr id={{id}}><td>{{id}}</td><td>{{status}}</td> </tr>';
 
         $(function() {
-            $("a").click(function(event) {
+            $("a.send").click(function(event) {
                 event.preventDefault();
                 $.post(this.href, function(response, textStatus, jqXHR) {
                     addTransaction(jqXHR.getResponseHeader("Location"));
                 });
             });
+
             fetchAll();
         });
 
@@ -48,7 +50,13 @@
         }
         function fetchAll() {
             $.get("rest/transaction?status=Done", function(data) {
-                $("#historical").html(Mustache.render(allTemplate, {items:data}));
+                $("#historical tbody").html(Mustache.render(allTemplate, {items:data}));
+                $("#historical a").click(function(event) {
+                    event.preventDefault();
+                    $.get(this.href, function(data) {
+                        $("#parser").html(Mustache.render(parserTemplate, data));
+                    });
+                });
             });
         }
     </script>
@@ -67,7 +75,7 @@
 
             <div class="nav-collapse">
                 <ul class="nav">
-                    <li class="active"><a href="#">Create</a></li>
+                    <li class="active"><a href="index.html">Create</a></li>
                     <li><a href="parsers.html">Parsers</a></li>
                 </ul>
             </div>
@@ -76,29 +84,50 @@
     </div>
 </div>
 <div class="container">
-    <h2>Rest operations</h2>
+    <div class="row">
+        <div class="span8">
 
 
-    <p><a href="rest/parser">Ny innsending</a>
+            <h2>Rest operations</h2>
 
-</div>
-<div class="container">
-    <h2>Pågående innsendinger</h2>
 
-    <table id="current" class="table table-striped">
-        <thead>
-        <th>id</th>
-        <th>Status</th>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-</div>
-<div class="container">
+            <p><a class="send" href="rest/parser">Ny innsending</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span8">
+            <h2>Pågående innsendinger</h2>
 
-    <h2>Historiske innsendinger</h2>
+            <table id="current" class="table table-striped">
+                <thead>
+                <tr>
+                    <th>id</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span8">
+            <h2>Historiske innsendinger</h2>
 
-    <p id="historical">
+            <table id="historical" class="table table-striped">
+                <thead>
+                <th>id</th>
+                <th>Status</th>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div class="span4" id="parser">
+
+        </div>
+    </div>
 </div>
 </body>
 </html>

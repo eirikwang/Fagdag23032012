@@ -23,14 +23,15 @@ public class Broker {
     private static final Map<Long, Transaction> TRANSACTIONS = new HashMap<Long, Transaction>();
     private static final Map<Long, Parser> PARSERS = new HashMap<Long, Parser>();
     private static final Queue<Transaction> NEW = new ConcurrentLinkedQueue<Transaction>();
-    private static AtomicLong c = new AtomicLong(0);
+    private static AtomicLong TRANSACTION_ID = new AtomicLong(0);
+    private static AtomicLong PARSER_ID = new AtomicLong(0);
 
     public static Broker getInstance() {
         return instance;
     }
 
     public Transaction addTransaction(Transaction.Type type, Operation data) {
-        Transaction t = new Transaction(c.incrementAndGet(), type, data);
+        Transaction t = new Transaction(TRANSACTION_ID.incrementAndGet(), type, data);
         TRANSACTIONS.put(t.id, t);
         NEW.add(t);
         return t;
@@ -69,7 +70,7 @@ public class Broker {
     }
 
     public Parser persistParser(Parser p) {
-        p.id = c.incrementAndGet();
+        p.id = PARSER_ID.incrementAndGet();
         PARSERS.put(p.id, p);
         return p;
     }

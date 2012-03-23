@@ -10,6 +10,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
@@ -22,18 +23,19 @@ public class ParserResource {
     private Broker broker = Broker.getInstance();
 
     @Path("/{id}")
+    @Produces("application/json")
+    @GET
     public Parser getParser(@PathParam("id") Long id){
         return broker.findParser(id);
     }
 
     @GET
-    @Path("/{id}")
+    @Produces("application/json")
     public List<Parser> getParsers(){
         return broker.findParsers();
     }
 
     @POST
-    @Path("/{id}")
     public Response addFileToParse() {
         Transaction transaction = broker.addTransaction(Transaction.Type.Parse, null);
         return Response.created(buildPath(transaction)).build();

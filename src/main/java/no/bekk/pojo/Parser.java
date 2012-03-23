@@ -4,7 +4,7 @@ package no.bekk.pojo;
  * @author Eirik Wang - eirik.wang@bekk.no
  * @since 1.0
  */
-public class Parser {
+public class Parser extends DomainClass{
     public Long id;
     public String value;
     public Integer duration;
