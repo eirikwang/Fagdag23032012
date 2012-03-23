@@ -22,11 +22,13 @@ public class ParserResource {
     @POST
     public Response addFileToParse(@PathParam("id") Long id) {
         Transaction transaction = broker.addTransaction(Transaction.Type.Parse, null);
-        URI uri = UriBuilder.fromPath("..")
+        return Response.created(buildPath(transaction)).build();
+    }
+
+    private URI buildPath(Transaction transaction) {
+        return UriBuilder.fromPath("..")
                 .path(TransactionResource.class)
                 .path(TransactionResource.class, "getTransaction")
                 .build(transaction.id);
-        System.out.println(uri);
-        return Response.created(uri).build();
     }
 }
